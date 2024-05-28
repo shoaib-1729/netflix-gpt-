@@ -1,16 +1,27 @@
 import useNowPlayingMovies from "../hooks/useNowPlayingMovies"
+import usePopularMovies from "../hooks/usePopularMovies";
+import useTopRatedMovies from "../hooks/useTopRatedMovies";
+import useUpcomingMovies from "../hooks/useUpcomingMovies";
 import Header from './Header';
 import MainContainer from "./MainContainer";
+import SecondaryContainer from "./SecondaryContainer"
 
 
 const Browse = () => {
   // we have to only call the custom hook for fetching movie lists from TMDB API and add it to the store
   useNowPlayingMovies();
+  // custom hook for showing popular movies onto the browse page
+  usePopularMovies();
+  // custom hook for showing top rated movies onto the browse page
+  useTopRatedMovies();
+  // custom hook for showing upcoming movies onto the browse page
+  useUpcomingMovies();
 
   return (
     <div className="">
         <Header />
         <MainContainer />
+        <SecondaryContainer />
 
 
 

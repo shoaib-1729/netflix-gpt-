@@ -1,13 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addTrailerVideo } from "../utils/moviesSlice";
 import { useEffect } from "react";
+import { API_OPTIONS } from "../utils/constants";
 
-const useMovieTrailer = () => {
+const useMovieTrailer = (movieId) => {
 // dispatch hook
 const dispatch = useDispatch();
 // calling TMDB api for fetching all the video related to the particular movie ID
 const getmovieTrailer = async () => {
-  const data = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos`, API_OPTIONS)
+  const data = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`, API_OPTIONS)
   const json = await data.json();
 //  console.log(json);
 //  filter trailer out of movie video list
