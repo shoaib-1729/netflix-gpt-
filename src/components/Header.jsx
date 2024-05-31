@@ -4,10 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { onAuthStateChanged, signOut } from "firebase/auth"; // Assume you're using Firebase for authentication
 import { addUser, removeUser } from "../utils/userSlice"; // Assuming you have a Redux slice for managing user state
 import { auth } from "../utils/firebase";
-import { LOGO, USER_AVATAR } from "../utils/constants";
+import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
+import { toggleGptSearchView } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
   const user = useSelector((state) => state.user); // Assuming user state is managed in Redux
+  // use selector for reading gpt store
+  const showGptSearchPage = useSelector((state) => state.gpt?.showGptSearchPage)
+
   const dispatch = useDispatch();
   const navigate = useNavigate(); // useNavigate hook ka istemal
   const [isLoggedIn, setIsLoggedIn] = useState(false); // User login status ka state
@@ -20,7 +25,15 @@ const Header = () => {
       setIsLoggedIn(false);
     }
   }, [user]);
-
+  // function for handling language change
+  const handleLanguageChange = (e) => {
+    // console.log(e.target.value)
+    dispatch(changeLanguage(e.target.value))
+  }
+// function for handling gpt search button click
+const handleGptSearchClick = () => {
+  dispatch(toggleGptSearchView())
+}
   const handleSignOut = () => {
     // Logic to sign out the user
     // For example, using Firebase auth signOut method
@@ -76,6 +89,30 @@ useEffect(() => {
                 // render only if user signs-in successfully
                 isLoggedIn && (
                         <div className="flex z-[100] gap-2 p-2">
+                          {
+                            // only show language dropdown when user is on gpt page.
+                          showGptSearchPage && (
+                             <select
+                                className="p-2 m-2 bg-gray-900 text-white"
+                                onChange={handleLanguageChange}>
+                                  {
+                                    SUPPORTED_LANGUAGES.map((lang) => (
+                                            <option key={lang?.identifier} value={lang?.identifier}>{lang?.name}</option>
+                                      ))
+                                    }
+                            </select>
+                          )
+                       }
+                            {/* button for gpt search */}
+                            <button
+                            className="py-2 px-4 bg-purple-800 rounded-lg mx-4 my-2"
+                            onClick={handleGptSearchClick}
+                            >
+                        {
+                          // When the user navigates to the GPT page, show the "Homepage" button to return to the home page; otherwise, show the "GPT Search" button.
+                          (showGptSearchPage) ? "Homepage" : "GPT Search"
+                        }
+                            </button>
                             <img className="w-12 h-12 rounded-md" src={USER_AVATAR} alt="sign-out"/>
                             <button onClick={handleSignOut} className='font-bold text-white text-xl hover:underline'>(Sign Out)</button>
                             {/* user info */}
